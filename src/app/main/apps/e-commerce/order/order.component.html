@@ -1,0 +1,547 @@
+<div id="order" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="row" fxLayoutAlign="space-between center">
+
+            <!-- APP TITLE -->
+            <div>
+
+
+                <div class="h2">
+                    <button mat-icon-button class="mr-4" [routerLink]="urlReturnView">
+                        <mat-icon>arrow_back</mat-icon>
+                    </button>
+                    <span style="vertical-align: middle;"> {{title}}</span>
+
+                </div>
+
+                <div fxLayout="column" fxLayoutAlign="start start"
+                    [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}" *ngIf="order.OrderInfo">
+
+                    <div class="subtitle secondary-text" *ngIf="order.OrderInfo.User">
+                        <p><span>{{'order.CreatedBy' | translate}}</span>: {{order.OrderInfo.User.UserName}}</p>
+                    </div>
+                </div>
+            </div>
+            <!-- / APP TITLE -->
+            <div>
+                <h2 *ngIf="order.OrderInfo">{{'order.Totalprice' | translate}}:
+                    <b>{{calculBasicTotalPrice()*(1+getCurrentTaxRatePercentage()*0.01) | currency:'EUR':'symbol'}}</b>
+                </h2>
+            </div>
+
+            <button mat-raised-button (click)="saveOrder()" class="add-product-button fuse-white mt-24 mt-md-0"
+                [disabled]='checkSaveButtonAvailable()'>
+                <span>{{'order.SaveOrder' | translate}}</span>
+            </button>
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+            <ngx-loading [show]="Loading"></ngx-loading>
+            <!-- CONTENT -->
+            <div class="content">
+
+                <mat-tab-group fxLayout="column" fxFlex>
+
+                    <mat-tab label="{{'order.OrderDetails' | translate}}">
+
+                        <div class="order-details tab-content p-24" fusePerfectScrollbar>
+
+                            <div class="section pb-48">
+
+                                <div class="pb-16" fxLayout="row" fxLayoutAlign="start center">
+                                    <mat-icon class="m-0 mr-16 secondary-text">account_circle</mat-icon>
+                                    <div class="h2 secondary-text">
+                                        {{'order.Customer' | translate}}
+                                        <button mat-button (click)="ModifyCustomerInfo()">{{'order.Modify' | translate}}</button>
+                                    </div>
+                                </div>
+
+                                <div class="customer mb-32" *ngIf="order.CustomerInfo">
+                                    <table class="simple">
+                                        <thead>
+                                            <tr>
+                                                <th>{{'order.Email' | translate}}</th>
+                                                <th>{{'order.Phone' | translate}}</th>
+                                                <th>{{'order.Company' | translate}}</th>
+                                                <th>{{'order.Siret' | translate}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <span class="email text-truncate">
+                                                        {{order.CustomerInfo.Email}}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        class="phone text-truncate">{{order.CustomerInfo.PhoneNumber}}</span>
+                                                </td>
+
+                                                <td>
+                                                    <span
+                                                        class="company text-truncate">{{order.CustomerInfo.EntrepriseName}}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class=" text-truncate">{{order.CustomerInfo.Siret}}</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="display:flex" id="adressZoom">
+
+                                    <div class="fuse-card  my-12 mr-8" style="width: 100%;">
+
+                                        <div class="p-16">
+                                            <div class="h1">{{'order.ShippingAddress' | translate}} <button mat-button
+                                                    color="primary" style="float: right;"
+                                                    (click)="modifyAddress('ShippingAddress')">{{'order.Modify' | translate}}</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-16 pt-0 line-height-1.75" *ngIf="order.ShippingAdress">
+                                            <h3 class="mt-0">Entreprise name: {{order.ShippingAdress.EntrepriseName}}
+                                            </h3>
+                                            <h3 class="mt-0">Name: {{order.ShippingAdress.ContactFirstName}}
+                                                &nbsp;{{order.ShippingAdress.ContactLastName}} </h3>
+                                            <p>{{'order.FirstLineAddress' | translate}}:
+                                                {{order.ShippingAdress.FirstLineAddress}} </p>
+                                            <p>{{'order.SecondLineAddress' | translate}}:
+                                                {{order.ShippingAdress.SecondLineAddress}} </p>
+                                            <p>{{'order.City' | translate}}: {{order.ShippingAdress.City}} &nbsp;
+                                                {{'order.ZipCode' | translate}}:
+                                                {{order.ShippingAdress.ZipCode}} </p>
+                                            <p>{{'order.Telephone' | translate}}:
+                                                {{order.ShippingAdress.ContactTelephone}} &nbsp;
+                                                {{'order.Fax' | translate}}:
+                                                {{order.ShippingAdress.ContactFax}} </p>
+                                        </div>
+
+                                    </div>
+                                    <div class="fuse-card my-12 ml-8" style="width: 100%;">
+
+                                        <div class="p-16">
+                                            <div class="h1">{{'order.InvoiceAddress' | translate}}<button mat-button
+                                                    color="primary" style="float: right;"
+                                                    (click)="modifyAddress('InvoiceAddress')">{{'order.Modify' | translate}}</button>
+                                            </div>
+                                        </div>
+                                        <div class="p-16 pt-0 line-height-1.75" *ngIf="order.FacturationAdress">
+                                            <h3 class="mt-0">Entreprise name: {{order.FacturationAdress.EntrepriseName}}
+                                            </h3>
+                                            <h3 class="mt-0">Name: {{order.FacturationAdress.ContactFirstName}}
+                                                &nbsp;{{order.FacturationAdress.ContactLastName}} </h3>
+                                            <p>{{'order.FirstLineAddress' | translate}}:
+                                                {{order.FacturationAdress.FirstLineAddress}} </p>
+                                            <p>{{'order.SecondLineAddress' | translate}}:
+                                                {{order.FacturationAdress.SecondLineAddress}} </p>
+                                            <p>{{'order.City' | translate}}: {{order.FacturationAdress.City}} &nbsp;
+                                                {{'order.ZipCode' | translate}}:
+                                                {{order.FacturationAdress.ZipCode}} </p>
+                                            <p>{{'order.Telephone' | translate}}:
+                                                {{order.FacturationAdress.ContactTelephone}} &nbsp;
+                                                {{'order.Fax' | translate}}:
+                                                {{order.FacturationAdress.ContactFax}} </p>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="section">
+
+                                <div class="pb-16" fxLayout="row" fxLayoutAlign="start center">
+                                    <mat-icon class="m-0 mr-16 secondary-text">access_time</mat-icon>
+                                    <div class="h2 secondary-text">{{'order.OrderStatus' | translate}}</div>
+                                </div>
+
+                                <table class="simple">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'order.OldStatus' | translate}}</th>
+                                            <th>{{'order.Status' | translate}}</th>
+                                            <th>{{'order.Operator' | translate}}</th>
+                                            <th>{{'order.UpdatedOn' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let status of order.StatusInfo">
+
+                                            <td>
+                                                <span class="status h6 p-4" *ngIf="status.OldStatus"
+                                                    [ngClass]="matchStatusClass(status.OldStatus.Code)"
+                                                    style="color: white!important;">
+                                                    <!-- [ngClass]="status.color" -->
+                                                    {{status.OldStatus.Label}}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <span class="status h6 p-4" *ngIf="status.NewStatus"
+                                                    [ngClass]="matchStatusClass(status.NewStatus.Code)"
+                                                    style="color: white!important;">
+                                                    <!-- [ngClass]="status.color" -->
+                                                    {{status.NewStatus.Label}}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <span>
+                                                    {{status.UserName}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {{status.ActionTime | date:'medium'}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="update-status p-24" fxLayout="row" fxLayoutAlign="start center">
+
+                                    <mat-form-field appearance="outline" class="mr-16" fxFlex>
+                                        <mat-label>{{'order.Status' | translate}}</mat-label>
+                                        <mat-select required [(ngModel)]="criteria.statusId">
+                                            <mat-option *ngFor="let status of statusList" [value]="status.Id">
+                                                {{status.Label}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                </div>
+
+                            </div>
+
+                            <div class="section pb-48" *ngIf="displayTransactionModule">
+
+                                <div class="pb-16" fxLayout="row" fxLayoutAlign="start center">
+                                    <mat-icon class="m-0 mr-16 secondary-text">attach_money</mat-icon>
+                                    <div class="h2 secondary-text">{{'order.Payment' | translate}}</div>
+                                </div>
+
+
+                                <div class="update-status p-24 pb-0" fxLayout="row" fxLayoutAlign="start center">
+
+                                    <mat-form-field appearance="outline" class="mr-16" fxFlex>
+                                        <mat-label>{{'order.TaxRate' | translate}}</mat-label>
+                                        <mat-select required [(ngModel)]="criteria.taxRateId">
+                                            <mat-option *ngFor="let taxrate of taxRateList" [value]="taxrate.Id">
+                                                {{taxrate.Value}}%
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                </div>
+
+                                <table class="simple">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'order.TaxRate' | translate}}</th>
+                                            <th>{{'order.AmountBeforeTax' | translate}}</th>
+                                            <th>{{'order.Amount' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="text-truncate">
+                                                    {{getCurrentTaxRatePercentage()}}%
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-truncate">
+                                                    {{calculBasicTotalPrice() | currency:'EUR':'symbol'}}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-truncate">
+                                                    {{calculBasicTotalPrice()*(1+getCurrentTaxRatePercentage()*0.01) | currency:'EUR':'symbol'}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="section pb-48" *ngIf="displayShippingModule">
+
+                                <div class="pb-16" fxLayout="row" fxLayoutAlign="start center">
+                                    <mat-icon class="m-0 mr-16 secondary-text">local_shipping</mat-icon>
+                                    <div class="h2 secondary-text">{{'order.Shipping' | translate}}</div>
+                                    <button mat-button (click)="ModifyShipmentInfo()">{{'order.Modify' | translate}}</button>
+                                </div>
+
+                                <table class="simple">
+                                    <thead>
+                                        <tr>
+                                            <th>{{'order.TrackingCode' | translate}}</th>
+                                            <th>{{'order.Weight' | translate}}</th>
+                                            <th>{{'order.Fee' | translate}}</th>
+                                            <th>{{'order.Date' | translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngIf="order.ShipmentInfo">
+                                            <td class="tracking-code">
+                                                {{order.ShipmentInfo.ShipmentNumber}}
+                                            </td>
+                                            <td>
+                                                {{order.ShipmentInfo.Weight}}
+                                            </td>
+                                            <td>
+                                                {{order.ShipmentInfo.Fee}}
+                                            </td>
+                                            <td>
+                                                {{order.ShipmentInfo.Date | date}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="section pb-48">
+
+                                <div class="pb-16" fxLayout="row" fxLayoutAlign="start center">
+                                    <mat-icon class="m-0 mr-16 secondary-text">comment</mat-icon>
+                                    <div class="h2 secondary-text">{{'order.Comment' | translate}}</div>
+                                </div>
+
+                                <table class="w-95-p">
+                                    <tr>
+                                        <td>
+                                            <mat-form-field class="w-100-p" appearance="outline">
+                                                <mat-label>{{'order.Customercomment' | translate}}</mat-label>
+                                                <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" disabled
+                                                    cdkAutosizeMinRows="10" cdkAutosizeMaxRows="10"  [(ngModel)]="criteria.ClientRemark.Text"></textarea>
+                                            </mat-form-field>
+                                        </td>
+                                        <td>
+                                            <mat-form-field class="w-100-p" appearance="outline">
+                                                <mat-label>{{'order.Internalcomment' | translate}}</mat-label>
+                                                <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                                    cdkAutosizeMinRows="10" cdkAutosizeMaxRows="10" [(ngModel)]="criteria.AdminRemark.Text"></textarea>
+                                            </mat-form-field>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+
+
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="{{'order.Products' | translate}}">
+                        <div class="products tab-content p-24" fusePerfectScrollbar>
+                            <table class="simple">
+                                <thead>
+                                    <tr>
+                                        <th class="w-80">{{'order.ID' | translate}}</th>
+                                        <th class="w-120">{{'order.Image' | translate}}</th>
+                                        <th>{{'order.Name' | translate}}</th>
+                                        <th class="w-120">{{'order.Price' | translate}}</th>
+                                        <th class="w-80">{{'order.Quantity' | translate}}</th>
+                                        <th class="w-120">{{'order.Total' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="product-row" *ngFor="let product of order.ProductList" (click)="UpdateProductPriceQuantity(product)">
+                                        <!-- [routerLink]="['/apps/e-commerce/product/']"
+                                        [queryParams]="{Id:product.ProductId}"-->
+                                        <td>
+                                            {{product.ProductId}}
+                                        </td>
+                                        <td>
+                                            <img class="product-image" *ngIf="product.DefaultPhotoPath"
+                                                [alt]="product.Label"
+                                                [src]="environment.url + product.DefaultPhotoPath" />
+                                            <img *ngIf="!product.DefaultPhotoPath"
+                                                [src]="'assets/images/ecommerce/product-image-placeholder.png'">
+                                        </td>
+                                        <td>
+                                            {{product.Label}}
+                                        </td>
+                                        <td>
+                                            {{product.Price | currency:'EUR':'symbol'}}
+                                        </td>
+                                        <td>
+                                            {{product.Quantity}}
+                                        </td>
+
+                                        <td>
+                                            {{(product.Price * product.Quantity)| currency:'EUR':'symbol' }}
+                                        </td>
+
+                                
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="m-24" *ngIf="order.ProductList!=null&&order.ProductList.length>0">
+                                <h4>{{'order.TotalSansTVA' | translate}}: <span style="float: right;">{{ calculBasicTotalPrice()
+                                    | currency:'EUR':'symbol'}}</span> </h4>
+                                <hr>
+                                <h4>{{'order.TVA' | translate}}({{getCurrentTaxRatePercentage()}}%): <span
+                                        style="float: right;">{{calculBasicTotalPrice()*getCurrentTaxRatePercentage()*0.01 | currency:'EUR':'symbol'}}</span>
+                                </h4>
+                                <hr>
+                                <h2>{{'order.TotalavecTVA' | translate}}: <span
+                                        style="float: right;">{{calculBasicTotalPrice()*(1+getCurrentTaxRatePercentage()*0.01) | currency:'EUR':'symbol'}}</span>
+                                </h2>
+                            </div>
+
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="{{'order.INVOICE' | translate}}">
+
+                        <div class="invoice tab-content p-24" fusePerfectScrollbar>
+
+                            <div id="invoice" class="compact page-layout blank" fxLayout="row" fusePerfectScrollbar>
+
+                                <div class="invoice-container">
+
+                                    <!-- INVOICE -->
+                                    <div class="card">
+
+                                        <div class="header">
+                                            <div class="invoice-date" *ngIf="order.OrderInfo">  {{order.OrderInfo.CreatedOn | date}}</div>
+
+                                            <div fxLayout="row" fxLayoutAlign="space-between stretch">
+                                                <div class="client" *ngIf="order.OrderInfo!=null && order.CustomerInfo!=null ">
+                                                    <div class="invoice-number" fxLayout="row"
+                                                        fxLayoutAlign="start center">
+                                                        <span class="title">{{'order.INVOICE' | translate}}</span>
+                                                        <span class="number">{{order.OrderInfo.Id}}</span>
+                                                    </div>
+
+                                                    <div class="info" *ngIf="order.CustomerInfo!=null">
+                                                        <div class="title">
+                                                            {{order.CustomerInfo.EntrepriseName}}
+                                                        </div>
+                                                        <div class="phone">{{order.CustomerInfo.PhoneNumber}}</div>
+                                                        <div class="email">{{order.CustomerInfo.Email}}</div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="issuer accent" fxLayout="row" fxLayoutAlign="start center">
+                                                    <div class="logo">
+                                                        <img src="assets/images/logos/fuse.svg">
+                                                    </div>
+
+                                                    <div class="info" *ngIf="order.FacturationAdress!=null">
+                                                        <div class="title"> {{order.FacturationAdress.EntrepriseName}}</div>
+                                                        <div class="address">{{order.FacturationAdress.FirstLineAddress}}   {{order.FacturationAdress.City}}  ,  {{order.FacturationAdress.ZipCode}}
+                                                        </div>
+                                                        <div class="phone"> {{order.FacturationAdress.ContactTelephone}}</div>
+                                                        <div class="email">{{order.FacturationAdress.ContactFax}}</div>
+                                                   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="content">
+
+                                            <table class="simple invoice-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{{'order.PRODUCT' | translate}}</th>
+                                                        <th class="text-right">{{'order.Price' | translate}}</th>
+                                                        <th class="text-right">{{'order.Quantity' | translate}}</th>
+                                                        <th class="text-right">{{'order.Total' | translate}}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let product of order.ProductList">
+                                                        <td>
+                                                            <div class="title">
+                                                                {{product.Label}}
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{product.Price | currency:'EUR':'symbol'}}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{product.Quantity}}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{product.Price * product.Quantity | currency:'EUR':'symbol'}}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <table class="simple invoice-table-footer">
+                                                <tbody>
+                                                    <tr class="subtotal">
+                                                        <td>{{'order.SUBTOTAL' | translate}}</td>
+                                                        <td>{{calculBasicTotalPrice() | currency:'EUR':'symbol'}}</td>
+                                                    </tr>
+                                                    <tr class="tax">
+                                                        <td>{{'order.TAX' | translate}}</td>
+                                                        <td>{{calculBasicTotalPrice()*getCurrentTaxRatePercentage()*0.01 | currency:'EUR':'symbol'}}</td>
+                                                    </tr>
+                                                    <!-- <tr class="discount">
+                                                        <td>{{'order.DISCOUNT' | translate}}</td>
+                                                        <td>-{{order.discount | currency:'EUR':'symbol'}}</td>
+                                                    </tr> -->
+                                                    <tr class="total">
+                                                        <td>{{'order.Total' | translate}}</td>
+                                                        <td>{{calculBasicTotalPrice()*(1+getCurrentTaxRatePercentage()*0.01) | currency:'EUR':'symbol'}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="footer">
+                                            <div class="note">
+                                                {{'order.PleasePayWithin15Days_ThankYouForYourBusiness' | translate}}
+                                            </div>
+                                            <div fxLayout="row" fxLayoutAlign="start start">
+                                                <div class="logo">
+                                                    <img src="assets/images/logos/fuse.svg">
+                                                </div>
+                                                <div class="small-note">
+                                                    {{'order.small-note' | translate}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- / INVOICE -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+
+                </mat-tab-group>
+
+            </div>
+            <!-- / CONTENT -->
+
+        </div>
+        <!-- / CONTENT CARD -->
+
+    </div>
+    <!-- / CENTER -->
+</div>

@@ -1,0 +1,32 @@
+<div mat-dialog>
+    <div mat-dialog-title>{{'customer-info-dialog.Add/Modify' | translate}}</div>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="customerForm">
+    
+            <mat-form-field class="example-full-width" style="width: 100%;">
+                <mat-label>{{'customer-info-dialog.Email' | translate}}</mat-label>
+                <input required matInput formControlName="Email" type="email">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" style="width: 100%;">
+                <mat-label>{{'customer-info-dialog.EntrepriseName' | translate}}</mat-label>
+                <input required matInput formControlName="EntrepriseName">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" style="width: 100%;">
+                <mat-label>{{'customer-info-dialog.PhoneNumber' | translate}}</mat-label>
+                <input required matInput formControlName="PhoneNumber" type="tel">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" style="width: 100%;">
+                <mat-label>{{'customer-info-dialog.Siret' | translate}}</mat-label>
+                <input required matInput formControlName="Siret" type="text">
+            </mat-form-field>
+        </form>
+    </div>
+
+    <div class="pt-24" mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">{{'customer-info-dialog.Cancel' | translate}}</button>
+        <button mat-button (click)="save()" [disabled]='customerForm.invalid'>{{'customer-info-dialog.Save' | translate}}</button>
+    </div>
+</div>

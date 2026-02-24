@@ -1,0 +1,285 @@
+<div id="product" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+        <ngx-loading [show]="saveLoading"></ngx-loading>
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="row" fxLayoutAlign="space-between center">
+
+            <!-- APP TITLE -->
+            <div fxLayout="row" fxLayoutAlign="start center">
+
+                <button mat-icon-button class="mr-0 mr-sm-16" [routerLink]="['/apps/e-commerce/products/']">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <div class="product-image mr-8 mr-sm-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    <div class="product-image mr-8 mr-sm-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                        <img *ngIf="photoPath.length>0&&photoPath[0]!=null&&photoPath[0].CompletePath!=null"
+                            [src]="photoPath[0].CompletePath">
+                    </div>
+                    <img *ngIf="photoPath.length<=0||!photoPath[0]||!photoPath[0].CompletePath"
+                        [src]="'assets/images/ecommerce/product-image-placeholder.png'">
+
+                </div>
+
+                <div fxLayout="column" fxLayoutAlign="start start"
+                    [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    <div class="h2">
+                        {{productName}}
+                    </div>
+
+                    <div class="subtitle secondary-text">
+                        <span>{{'PRODUCT.PRODUCT_DETAIL'| translate}}</span>
+                    </div>
+                </div>
+            </div>
+            <!-- / APP TITLE -->
+
+            <button mat-raised-button [disabled]="productForm.invalid" *ngIf="pageType ==='new'"
+                (click)="saveProduct()">
+                <span>{{'PRODUCT.ADD'| translate}}</span>
+            </button>
+
+            <button mat-raised-button [disabled]='productForm.invalid' class="save-product-button"
+                (click)="saveProduct()">
+                <span>{{'PRODUCT.SAVE'| translate}}</span>
+            </button>
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <!-- CONTENT -->
+            <div class="content">
+                <div class="overlay" *ngIf="loading">
+                    <div class="center">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                </div>
+
+                <form name="productForm" [formGroup]="productForm" class="product w-100-p" fxLayout="column" fxFlex>
+
+                    <mat-tab-group>
+
+                        <mat-tab label="{{'PRODUCT.BASIC_INFO' | translate}}">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+                                <div fxLayout="row" fxLayoutAlign="space-between">
+                                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                                        <mat-label>{{'PRODUCT.PRODUCT_NAME'| translate}}<span>(fr)</span></mat-label>
+                                        <input matInput placeholder="{{'PRODUCT.PRODUCT_NAME'| translate}}"
+                                            name="frName" formControlName="Labelfr" required>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                                        <mat-label>{{'PRODUCT.PRODUCT_NAME'| translate}}<span>(cn)</span></mat-label>
+                                        <input matInput placeholder="{{'PRODUCT.PRODUCT_NAME'| translate}}"
+                                            name="cnName" formControlName="Labelcn">
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                                        <mat-label>{{'PRODUCT.PRODUCT_NAME'| translate}}<span>(en)</span></mat-label>
+                                        <input matInput placeholder="{{'PRODUCT.PRODUCT_NAME'| translate}}"
+                                            name="enName" formControlName="Labelen">
+                                    </mat-form-field>
+                                </div>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.REFERENCE_CODE'| translate}}</mat-label>
+                                    <input matInput placeholder="{{'PRODUCT.REFERENCE_CODE'| translate}}"
+                                        name="reference" formControlName="ReferenceCode" required>
+
+                                    <mat-error *ngIf="isAlreadyExists()">
+                                        {{'PRODUCT.CodeAlreadyExists' | translate}}
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.PRODUCT_DESCRIPTION'| translate}}</mat-label>
+                                    <textarea matInput placeholder="{{'PRODUCT.PRODUCT_DESCRIPTION'| translate}}"
+                                        name="description" formControlName="Description" rows="5">
+                                    </textarea>
+                                </mat-form-field>
+
+                                <div fxLayout="row" fxLayoutAlign="start start">
+
+                                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30">
+                                        <mat-label>{{'PRODUCT.MAIN_CATEGORY' | translate}}</mat-label>
+                                        <mat-select formControlName="MainCategoryId" name="mainCategory" required>
+                                            <mat-option *ngFor="let item of mainCategoryList" [value]="item.Id">
+                                                {{item.Label}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30"
+                                        fxFlexOffset="5vw">
+                                        <mat-label>{{'PRODUCT.PRODUCT_CATEGORY' | translate}}</mat-label>
+                                        <mat-select formControlName="SecondCategoryId" name="category" required>
+                                            <mat-option *ngFor="let item of getSecondCategoryList()" [value]="item.Id">
+                                                {{item.Label}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+
+                                    <mat-form-field appearance="outline" floatLabel="always" fxFlex="30"
+                                        fxFlexOffset="5vw">
+                                        <mat-label>{{'PRODUCT.PRODUCTS_STATUS' | translate}}</mat-label>
+                                        <mat-select formControlName="Validity" name="validity">
+                                            <mat-option *ngFor="let item of validityList" [value]="item.Value">
+                                                {{item.Label}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+
+
+                            </div>
+
+                        </mat-tab>
+
+                        <mat-tab label="{{'PRODUCT.PRODUCT_IMAGE' | translate}}" [disabled]="productId==0">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+                                <div fxLayout="row wrap" fxLayoutAlign="start start">
+
+                                    <div *ngFor="let item of photoPath" class="product-image" fxlayout="row"
+                                        fxLayoutAlign="center center">
+                                        <img class="media" [src]="item.CompletePath"
+                                            (click)="openImageViewDialog(item)">
+                                    </div>
+
+
+                                    <div class="product-image add-new-image" fxLayout="column"
+                                        fxLayoutAlign="center center" (click)="imgFileInput.click()"
+                                        [@animate]="{value:'*',params:{y:'100%'}}">
+                                        <mat-icon class="s-56">add_circle</mat-icon>
+                                        <div class="add-image-descript">{{'PRODUCT.ADD_NEW_IMAGE' | translate}}</div>
+                                    </div>
+
+                                    <img *ngIf="imgURL" [src]="imgURL">
+                                    <input hidden #imgFileInput type="file" accept="image/*"
+                                        (change)="uploadImage($event.target.files)">
+                                </div>
+                            </div>
+
+                        </mat-tab>
+
+                        <mat-tab label="{{'PRODUCT.PRICING' | translate}}">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.PRICE'| translate}}</mat-label>
+                                    <input matInput placeholder="{{'PRODUCT.PRICE'| translate}}" name="price"
+                                        formControlName="Price" type="number" required>
+                                    <span matPrefix>€&nbsp;</span>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.TAX_RATE'| translate}}</mat-label>
+                                    <mat-select name="TaxRateId" formControlName="TaxRateId" required>
+                                        <mat-option *ngFor="let item of taxRateList" [value]="item.Id">{{item.Value}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <span matPrefix>&#37;&nbsp;</span>
+                                </mat-form-field>
+
+                            </div>
+                        </mat-tab>
+
+                        <mat-tab label="{{'PRODUCT.PROPERTY' | translate}}">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.SIZE' | translate}}</mat-label>
+                                    <input matInput placeholder="{{'PRODUCT.SIZE' | translate}}" name="size"
+                                        formControlName="Size">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.COLOR' | translate}}</mat-label>
+                                    <input matInput placeholder="{{'PRODUCT.COLOR' | translate}}" name="color"
+                                        formControlName="Color">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.MATERIAL' | translate}}</mat-label>
+                                    <input matInput placeholder="{{'PRODUCT.MATERIAL' | translate}}" name="material"
+                                        formControlName="Material">
+                                </mat-form-field>
+
+                            </div>
+
+                        </mat-tab>
+
+                        <mat-tab label="{{'PRODUCT.PACKING' | translate}}">
+
+                            <div class="tab-content p-24" fusePerfectScrollbar fxLayout="column">
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.QUANTITY_PER_BOX' | translate}}</mat-label>
+                                    <input matInput placeholder="{{'PRODUCT.QUANTITY_PER_BOX' | translate}}"
+                                        name="quantityPerBox" formControlName="QuantityPerBox" type="number">
+                                    <!-- <span matSuffix>kg</span> -->
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" floatLabel="always" class="w-100-p">
+                                    <mat-label>{{'PRODUCT.MIN_QUANTITY' | translate}}</mat-label>
+                                    <input required matInput placeholder="{{'PRODUCT.MIN_QUANTITY' | translate}}"
+                                        name="minQuantity" formControlName="MinQuantity" type="number">
+                                    <!-- <span matPrefix>$&nbsp;</span> -->
+                                </mat-form-field>
+
+                            </div>
+
+                        </mat-tab>
+
+                        <mat-tab label="{{'PRODUCT.Evaluation' | translate}}">
+
+                            <div class="tab-content p-24">
+
+                                <table class="simple invoice-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left">{{'PRODUCT.EvaluationDate' | translate}}</th>
+                                            <th class="text-left">{{'PRODUCT.EvaluationEntreprise' | translate}}</th>
+                                            <th class="text-left">{{'PRODUCT.EvaluationTitle' | translate}}</th>
+                                            <th class="text-left">{{'PRODUCT.EvaluationLevel' | translate}}</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of ProductEvaluationList"
+                                            (click)="ModifyProductEvaluation(item)" style="cursor:pointer;">
+                                            <td class="text-left">{{item.CreatedOn}}</td>
+                                            <td class="text-left"> {{item.User.EntrepriseName}}</td>
+                                            <td class="text-left">{{item.ProductComment.Title}}</td>
+                                            <td class="text-left">{{item.ProductComment.Level}}/5</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </mat-tab>
+
+
+                    </mat-tab-group>
+
+                </form>
+
+            </div>
+            <!-- / CONTENT -->
+
+        </div>
+        <!-- / CONTENT CARD -->
+
+    </div>
+    <!-- / CENTER -->
+
+</div>

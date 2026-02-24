@@ -1,0 +1,104 @@
+﻿@import "@fuse/scss/fuse";
+
+#product {
+
+    .header {
+
+        .product-image {
+            overflow: hidden;
+            width: 56px;
+            min-width: 56px;
+            max-width: 56px;
+            height: 56px;
+            min-height: 56px;
+            max-height: 56px;
+            border-radius: 4px;
+
+            img {
+                height: 100%;
+                width: 100%;
+                max-width: none;
+            }
+            
+        }
+
+        .subtitle {
+            margin: 6px 0 0 0;
+        }
+    }
+
+    .content {
+
+        .overlay{
+            height:100vh;
+            width:100%;
+            background-color:rgba(0, 0, 0, 0.286);
+            z-index:    10;
+            top:        0; 
+            left:       0; 
+            position:   fixed;
+          }
+
+          .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -moz-transform: translateX(-50%) translateY(-50%);
+            -webkit-transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        .mat-tab-group,
+        .mat-tab-body-wrapper,
+        .tab-content{
+            flex: 1 1 auto;
+            max-width: 100%;
+        }
+
+        .mat-tab-body-content {
+            display: flex;
+        }
+
+        .mat-tab-label {
+            height: 64px;
+        }
+
+        .product-image {
+            overflow: hidden;
+            width: 128px;
+            height: 128px;
+            margin-right: 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+
+            img {
+                height: 100%;
+                width: auto;
+                max-width: none;
+             }
+
+            &:hover:not(.add-new-image) {
+                @include mat-elevation(8);
+            }
+
+            &.add-new-image {
+                border: 2px dashed black;
+                cursor: pointer;
+            }
+
+            .add-image-descript {
+                padding: 8px 0 0 0;
+                font-weight: 300;
+                font-size: 12px;
+                text-align: center; 
+            }
+        }
+
+        // Temporary prefix alignment fix
+        .mat-form-field-appearance-outline .mat-form-field-prefix,
+        .mat-form-field-appearance-outline .mat-form-field-suffix {
+            top: 0;
+        }
+    }
+
+}

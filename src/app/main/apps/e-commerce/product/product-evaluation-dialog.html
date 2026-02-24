@@ -1,0 +1,16 @@
+<div mat-dialog>
+    <div mat-dialog-content>
+        <ngx-loading [show]="removeEvaluationLoading"></ngx-loading>
+        <div>
+            <h3>{{ProductComment.Title}} </h3>
+            <p>{{ProductComment.Body}} </p>
+            <p>{{'PRODUCT.Level'| translate}}: {{ProductComment.Level}} /5</p>
+        </div>
+    </div>
+
+    <mat-dialog-actions fxLayoutAlign="end end">
+        <button class="mat-raised-button red-500"(click)="remove()">Remove</button>
+        <button class="mat-raised-button"(click)="close()">Close</button>
+    </mat-dialog-actions>
+</div>
+

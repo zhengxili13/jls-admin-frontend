@@ -1,0 +1,11 @@
+<div mat-dialog>
+<div mat-dialog-title>{{data.title}}</div>
+    <div mat-dialog-content>
+        {{data.message}}
+    </div>
+
+    <div  class="pt-24" mat-dialog-actions>
+        <button mat-raised-button color="primary" class="mat-accent mr-16" (click)="choseYes()">Confirm</button>
+        <button mat-raised-button color="warn" (click)="choseNo()">Cancel</button>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+<div mat-dialog>
+    <div mat-dialog-title>{{'modify-product-price-dialog.Add/Modify' | translate}}</div>
+    <div mat-dialog-content>
+        <mat-form-field class="example-full-width" style="width: 100%;" appearance="outline">
+            <mat-label>{{'modify-product-price-dialog.Price' | translate}}</mat-label>
+            <input  min="0"  matInput type="number" [(ngModel)]="product.Price">
+            <span matPrefix>€&nbsp;</span>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" style="width: 100%;" appearance="outline">
+            <mat-label>{{'modify-product-price-dialog.Quantity' | translate}}</mat-label>
+            <input  min="0"  matInput type="number" [(ngModel)]="product.Quantity">
+        </mat-form-field>
+    </div>
+
+    <div class="pt-24" mat-dialog-actions>
+        <button mat-button (click)="save()">{{'modify-product-price-dialog.Save' | translate}}</button>
+    </div>
+</div>

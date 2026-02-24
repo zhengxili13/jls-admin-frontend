@@ -1,0 +1,33 @@
+<div mat-dialog>
+    <div mat-dialog-title>{{'shipment-info-dialog.Add/Modify' | translate}}</div>
+    <div mat-dialog-content>
+        <form class="example-form" [formGroup]="shipmentForm">
+    
+            <mat-form-field class="example-full-width" style="width: 100%;" appearance="outline">
+                <mat-label>{{'shipment-info-dialog.ShipmentNumber' | translate}}</mat-label>
+                <input  matInput formControlName="ShipmentNumber">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" style="width: 100%;" appearance="outline">
+                <mat-label>{{'shipment-info-dialog.Weight' | translate}}</mat-label>
+                <input  matInput formControlName="Weight" type="number">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" style="width: 100%;" appearance="outline">
+                <mat-label>{{'shipment-info-dialog.Fee' | translate}}</mat-label>
+                <input  matInput formControlName="Fee" type="number">
+            </mat-form-field>
+
+            <mat-form-field class="w-100-p" appearance="outline">
+                <mat-label>{{'shipment-info-dialog.Date' | translate}}</mat-label>
+                <input matInput  formControlName="Date" type="date">
+      
+              </mat-form-field>
+        </form>
+    </div>
+
+    <div class="pt-24" mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">{{'shipment-info-dialog.Cancel' | translate}}</button>
+        <button mat-button (click)="save()" [disabled]='shipmentForm.invalid'>{{'shipment-info-dialog.Save' | translate}}</button>
+    </div>
+</div>

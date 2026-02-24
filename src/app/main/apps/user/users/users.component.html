@@ -1,0 +1,147 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent"
+             fxLayout="column" fxLayoutAlign="center center"
+             fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0"
+                 fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    shopping_basket
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    {{'users.UsersList' | translate}}
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+            <!-- CONDITION -->
+            
+            <div style="min-width: 10%; max-width: 10%;">
+                <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'users.UserType' | translate}}</mat-label>
+                    <mat-select  [(ngModel)]="searchCriteria.UserType">
+                      <mat-option>None</mat-option>
+                      <mat-option *ngFor="let item of userRoleList" [value]="item.Id">{{item.Name}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+
+            <div style="min-width: 10%; max-width: 10%;">
+                <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'users.UserStatus' | translate}}</mat-label>
+                    <mat-select [(ngModel)]="searchCriteria.Validity">
+                      <mat-option *ngFor="let item of statusList" [value]="item.Value">{{item.Label}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+            <!-- SEARCH -->
+            <div class="search-wrapper mx-32 mx-md-0">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon>search</mat-icon>
+                    <input #filter placeholder="{{'users.SearchUserName' | translate}}" [(ngModel)]="searchCriteria.Username">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+
+            <!-- ADD BUTTON -->
+            <button mat-raised-button
+                    (click) = "insertOrUpdateUser(0)"
+                    class="add-product-button fuse-white mt-24 mt-md-0">
+            <span>{{'users.AddNewUser' | translate}}</span>
+            </button>
+            <!-- / ADD BUTTON -->
+            <button mat-raised-button
+            (click) = "search()"
+            class="add-product-button fuse-white mt-24 mt-md-0">
+            <span>{{'users.Search' | translate}}</span>
+            </button>
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table class="products-table"
+                       #table [dataSource]="userList"
+                       matSort
+                       (matSortChange)="sortData($event)"
+                       [@animateStagger]="{value:'50'}"
+                       fusePerfectScrollbar>
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="username">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'users.UserName' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let user">
+                        <p class="text-truncate">{{user.Username}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="entrepriseName">
+                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>{{'users.EnterpriseName' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let user" fxHide fxShow.gt-md>
+                        <p class="text-truncate">{{user.EntrepriseName}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Category Column -->
+                <ng-container matColumnDef="userType">
+                    <mat-header-cell *matHeaderCellDef  mat-sort-header >{{'users.UserType' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let user" >
+                        <p class="category text-truncate">
+                            {{user.UserRoleName}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="telephone">
+                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>{{'users.Telephone' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let user" fxHide fxShow.gt-md>
+                        <p class="category text-truncate">
+                            {{user.Telephone}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Active Column -->
+                <ng-container matColumnDef="active">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>{{'users.Status' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let user" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="user.Validity" class="active-icon green-600 s-16">check</mat-icon>
+                        <mat-icon *ngIf="!user.Validity" class="active-icon red-500 s-16">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let user; columns: displayedColumns;"
+                         class="product"
+                         matRipple
+                         (click) = "insertOrUpdateUser(user.Id)"
+                         >
+                </mat-row>
+
+            </mat-table>
+
+            <mat-paginator #paginator
+                           [length]="totalCount"
+                           [pageIndex]="searchCriteria.begin"
+                           [pageSize]="searchCriteria.step"
+                           [pageSizeOptions]="[5, 10, 25, 100]"
+                           (page)="pageEvent = getServerData($event)">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

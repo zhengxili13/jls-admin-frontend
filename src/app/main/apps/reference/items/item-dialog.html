@@ -1,0 +1,103 @@
+<div mat-dialog>
+    <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)" novalidate>
+        <div mat-dialog-title>{{'ITEMS.Add/Modify' | translate}}</div>
+        <div mat-dialog-content>
+            <ngx-loading [show]="Loading"></ngx-loading>
+            <table class="example-full-width" cellspacing="0">
+                <tr>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'ITEMS.CODE' | translate}}</mat-label>
+                            <input matInput required [(ngModel)]="itemInfo.Code" name="Code" type="text"
+                                (ngModelChange)="isAlreadyExists()" [ngModelOptions]="{updateOn: 'blur'}">
+
+                        </mat-form-field>
+                    </td>
+                    <td style="min-width: 100px;">
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'ITEMS.CATEGORY' | translate}}</mat-label>
+                            <mat-select [disabled]="itemInfo.Id!=0" required [(ngModel)]="itemInfo.CategoryId"
+                                name="CategoryId">
+                                <mat-option *ngFor="let item of data.referenceCategoryList" [value]="item.Id">
+                                    {{item.ShortLabel}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td style="min-width: 100px;">
+                        <mat-form-field style="display: block;">
+                            <mat-label>{{'ITEMS.UserStatus' | translate}}</mat-label>
+                            <mat-select required [(ngModel)]="itemInfo.Validity" name="Validity">
+                                <mat-option *ngFor="let item of data.statusList" [value]="item.Value">{{item.Label}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'ITEMS.LABEL' | translate}}(fr)</mat-label>
+                            <input matInput required [(ngModel)]="itemInfo.LabelFR" type="text" name="LabelFR">
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'ITEMS.LABEL' | translate}}(en)</mat-label>
+                            <input matInput [(ngModel)]="itemInfo.LabelEN" type="text" name="LabelEN">
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'ITEMS.LABEL' | translate}}(cn)</mat-label>
+                            <input matInput [(ngModel)]="itemInfo.LabelCN" type="text" name="LabelCN">
+                        </mat-form-field>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'ITEMS.PARENT_CATEGORY' | translate}}</mat-label>
+                            <mat-select [disabled]="itemInfo.Id!=0" [(ngModel)]="itemInfo.ParentCategoryId"
+                                name="categoryParentId">
+                                <mat-option *ngFor="let item of data.referenceCategoryList" [value]="item.Id">
+                                    {{item.ShortLabel}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field style="display: block;">
+                            <mat-label>{{'ITEMS.PARENT' | translate}}</mat-label>
+                            <mat-select [(ngModel)]="itemInfo.ParentId" name="ParentId">
+                                <mat-option *ngFor="let item of getTargetReferenceItemByCategory()" [value]="item.Id">
+                                    {{item.Label}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'ITEMS.VALUE' | translate}}</mat-label>
+                            <input matInput [(ngModel)]="itemInfo.Value" type="text" name="Value">
+                        </mat-form-field>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="alert alert-danger mb-0" *ngIf="CodeExist">
+                {{'ITEMS.CodeAlreadyExists' | translate}}
+            </div>
+        </div>
+
+        <div class="pt-24" mat-dialog-actions>
+            <button mat-button (click)="onNoClick()" type="button">{{'ITEMS.Cancel' | translate}}</button>
+            <button mat-button type="submit" [disabled]="!contactForm.valid ||CodeExist">{{'ITEMS.Save' | translate}}</button>
+        </div>
+    </form>
+</div>

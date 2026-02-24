@@ -1,0 +1,11 @@
+﻿@mixin toolbar-theme($theme) {
+
+    $foreground: map-get($theme, foreground);
+
+    toolbar {
+
+        .toolbar-separator {
+            background: map-get($foreground, divider);
+        }
+    }
+}

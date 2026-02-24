@@ -1,0 +1,172 @@
+<div id="items" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <div class="overlay" *ngIf="loading">
+            <div class="spinner-center">
+                <mat-spinner></mat-spinner>
+            </div>
+        </div>
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+
+            <div style="min-width: 15%; max-width: 15%;" class="mt-24">
+                <mat-form-field style="display: block;" floatLabel='always' >
+                    <mat-label class="searchTextLabel">{{'ITEMS.CATEGORY' | translate}}</mat-label>
+                    <mat-select [(ngModel)]="searchCriteria.ReferenceCategoryId">
+                        <mat-option>None</mat-option>
+                        <mat-option *ngFor="let item of categoryList" [value]="item.Id">{{item.ShortLabel}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'ITEMS.Status' | translate}}</mat-label>
+                    <mat-select [(ngModel)]="searchCriteria.Validity">
+                        <mat-option *ngFor="let item of statusList" [value]="item.Value">{{item.Label}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div style="min-width: 15%; max-width: 15%;" class="mt-24">
+                <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'ITEMS.PARENT_CATEGORY' | translate}}</mat-label>
+                    <mat-select [(ngModel)]="searchCriteria.ParentCategoryId">
+                        <mat-option>None</mat-option>
+                        <mat-option *ngFor="let item of categoryList" [value]="item.Id">
+                            {{item.ShortLabel}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field style="display: block;"  floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'ITEMS.PARENT' | translate}}</mat-label>
+                    <mat-select [(ngModel)]="searchCriteria.ParentId">
+                        <mat-option>None</mat-option>
+                        <mat-option *ngFor="let item of getTargetReferenceItemByCategory()" [value]="item.Id">
+                            {{item.Label||item.Code}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+  
+            <!-- SEARCH -->
+            <div class="search-wrapper mx-32 mx-md-0">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon>search</mat-icon>
+                    <input #filter placeholder="{{'ITEMS.SEARCH_FOR_A_ITEM' | translate}}"
+                        [(ngModel)]="searchCriteria.SearchText">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+
+            <!-- ADD BUTTON -->
+            <button mat-raised-button (click)="updateOrCreateReferenceItem(getEmptyReferenceItem())"
+                class="add-item-button fuse-white mt-24 mt-md-0">
+                <span>{{'ITEMS.ADD_NEW_ITEM' | translate}}</span>
+            </button>
+            <!-- / ADD BUTTON -->
+            <button mat-raised-button (click)="search()" class="add-item-button fuse-white mt-24 mt-md-0">
+                <span>{{'ITEMS.Search' | translate}}</span>
+            </button>
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table class="items-table" #table [dataSource]="referenceItemList" matSort
+                [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ITEMS.ID' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let item">
+                        <p class="text-truncate">{{item.Id}}</p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <!-- Code Column -->
+                <ng-container matColumnDef="code">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ITEMS.CODE' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let item">
+                        <p class="text-truncate">{{item.Code}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Parent Column -->
+                <ng-container matColumnDef="parent">
+                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-xs>
+                        {{'ITEMS.PARENT' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let item" fxHide fxShow.gt-xs>
+                        <p class="category text-truncate" *ngIf="item.ParentReferenceItem">
+                            {{item.ParentReferenceItem.Label || item.ParentReferenceItem.Code}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <!-- Label Column -->
+                <ng-container matColumnDef="label">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>{{'ITEMS.LABEL' | translate}}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let item" fxHide fxShow.gt-xs>
+                        <p class="price text-truncate">
+                            {{item.Label}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <!-- Category Column -->
+                <ng-container matColumnDef="category">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>
+                        {{'ITEMS.CATEGORY' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let item" fxHide fxShow.gt-xs>
+                        <p class="price text-truncate">
+                            {{item.Category.ShortLabel}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Value Column -->
+                <ng-container matColumnDef="value">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>{{'ITEMS.VALUE' | translate}}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let item" fxHide fxShow.gt-xs>
+                        <p class="price text-truncate">
+                            {{item.Value}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Active Column -->
+                <ng-container matColumnDef="active">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>
+                        {{'ITEMS.STATUS' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let item" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="item.Validity" class="active-icon green-600 s-16">check</mat-icon>
+                        <mat-icon *ngIf="!item.Validity" class="active-icon red-500 s-16">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let item; columns: displayedColumns;" class="item"
+                    (click)="updateOrCreateReferenceItem(item)" matRipple>
+                </mat-row>
+
+            </mat-table>
+
+            <mat-paginator #paginator [length]="totalCount" [pageIndex]="0" [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]" (page)="pageEvent = getServerData($event)">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

@@ -1,0 +1,209 @@
+<div id="orders" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent"
+             fxLayout="column" fxLayoutAlign="center center"
+             fxLayout.gt-xs="row" fxLayoutAlign.gt-xs="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-sm-0"
+                 fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    shopping_basket
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">{{'ORDERS.ORDERS' | translate}}</span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <div style="min-width: 10%; max-width: 10%;" class="mt-24">
+                <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'ORDERS.FromDate' | translate}}</mat-label>
+                    <input matInput [matDatepicker]="picker" disabled  style="color: white;" [(ngModel)]="searchCriteria.FromDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'ORDERS.ToDate' | translate}}</mat-label>
+                    <input matInput [matDatepicker]="picker2" disabled style="color: white;" [(ngModel)]="searchCriteria.ToDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2 disabled="false"></mat-datepicker>
+                  </mat-form-field>
+            </div>
+        
+            <div style="min-width: 10%; max-width: 10%;" class="mt-24">
+                <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'ORDERS.USERNAME' | translate}}</mat-label>
+                    <mat-select  #singleSelect  [(ngModel)]="searchCriteria.UserId">
+                    <mat-option>
+                        <ngx-mat-select-search  placeholderLabel="username" [(ngModel)]="userSelectSearchText" noEntriesFoundLabel="No result found"></ngx-mat-select-search>
+                    </mat-option>
+                     <mat-option>None</mat-option>
+                      <mat-option *ngFor="let item of checkUserSearchText()" [value]="item.Id">{{item.UserName}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field style="display: block;" floatLabel='always'>
+                    <mat-label class="searchTextLabel">{{'ORDERS.Product_STATUS' | translate}}</mat-label>
+                    <mat-select [(ngModel)]="searchCriteria.StatusId">
+                        <mat-option></mat-option>
+                      <mat-option *ngFor="let item of statusList" [value]="item.Id">{{item.Label}}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+
+            <!-- SEARCH -->
+            <div class="search-wrapper  ml-sm-32">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon>search</mat-icon>
+                    <input #filter placeholder="{{'ORDERS.SearchYourOrderID' | translate}}" [(ngModel)]="searchCriteria.OrderId">
+                </div>
+            </div>
+
+              
+            <button mat-raised-button
+                    class="add-product-button fuse-white mt-24 mt-md-0" (click)="search()">
+              <span>{{'ORDERS.SEARCH_FOR_AN_ORDER' | translate}}</span>
+            </button>
+
+                  
+            <button mat-raised-button
+                    class="add-product-button fuse-white mt-24 mt-md-0" (click)="export()">
+              <span>{{'ORDERS.Export' | translate}}</span>
+            </button>
+            <!-- / SEARCH -->
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table class="orders-table"
+                       #table [dataSource]="orderList"
+                       matSort
+                       (matSortChange)="sortData($event)"
+                       [@animateStagger]="{value:'50'}"
+                       fusePerfectScrollbar>
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxShow.gt-sm style="max-width: 10%;">Id</mat-header-cell>
+                    <mat-cell *matCellDef="let order" style="max-width: 10%;">
+                        <p class="text-truncate">{{order.Id}}</p>
+                    </mat-cell>
+                </ng-container>
+
+
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="createdOn">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxShow.gt-sm>{{'ORDERS.OrderCreateOn' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                        <p class="text-truncate">{{order.CreatedOn | date}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Date Column -->
+                <ng-container matColumnDef="updatedOn">
+                <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-sm>{{'ORDERS.OrderUpdateOn' | translate}}</mat-header-cell>
+                <mat-cell *matCellDef="let order" fxHide fxShow.gt-sm>
+                    <p class="text-truncate">
+                        {{order.UpdatedOn |date }}
+                    </p>
+                </mat-cell>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="entrepriseName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ORDERS.ENTREPRISE_NAME' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                        <p class="text-truncate" style=" white-space: inherit;">
+                            {{order.User.EntrepriseName}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Reference Column -->
+                <ng-container matColumnDef="lastModified" >
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxShow.gt-sm>{{'ORDERS.OrderLastModifiUser' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let order" fxHide fxShow.gt-sm >
+                        <p class="text-truncate" *ngIf="order.UpdatedByUser">{{order.UpdatedByUser.UserName}}</p>
+                    </mat-cell>
+                </ng-container>
+
+            
+
+                <ng-container matColumnDef="userName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ORDERS.OrderUserName' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                        <p class="text-truncate">
+                            {{order.User.UserName}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Total Price Column -->
+                <ng-container matColumnDef="total">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-md>{{'ORDERS.TOTAL_PRICE' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let order" fxHide fxShow.gt-md>
+                        <p class="total-price text-truncate">
+                            {{order.TotalPrice | currency:'USD':'symbol'}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+
+
+                <ng-container matColumnDef="type">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ORDERS.Type' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                        <p class="status text-truncate h6 p-4" *ngIf="order.OrderType!=null">
+                            {{order.OrderType.Label || order.OrderType.Code}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ORDERS.Status' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                        <p class="status text-truncate h6 p-4" [ngClass]="matchStatusClass(order.Status.Code)" style="color: white!important;">
+                            {{order.Status.Label||order.Status.Code}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+  
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let order; columns: displayedColumns;"
+                         class="order"
+                         matRipple
+                         (click) = 'saveSearchCriteria()'
+                         [routerLink]="['/apps/e-commerce/order/']"
+                         [queryParams]="{Id:order.Id, View :view}">
+                </mat-row>
+
+            </mat-table>
+
+            <mat-paginator #paginator
+                           [length]="totalCount"
+                           [pageIndex]="searchCriteria.begin"
+                           [pageSize]="searchCriteria.step"
+                           [pageSizeOptions]="[5, 10, 25, 100]"
+                           (page) = "pageEvent = getServerData($event)">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

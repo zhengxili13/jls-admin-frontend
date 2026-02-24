@@ -1,0 +1,89 @@
+<div id="categories" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <div class="overlay" *ngIf="loading"><div class="spinner-center"><mat-spinner></mat-spinner></div></div>
+
+        <!-- HEADER -->
+        <div class="header accent"
+             fxLayout="column" fxLayoutAlign="center center"
+             fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0"
+                 fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    shopping_basket
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    {{'CATEGORIES.Category' | translate}}
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <!-- ADD BUTTON -->
+            <button *ngIf="modifyOrAddCategoryPermission" mat-raised-button (click)="ShowCategoryDialog(crateNewCategory())" 
+                    class="add-item-button fuse-white mt-24 mt-md-0">
+            <span>{{'CATEGORIES.ADD_NEW_CATEGORY' | translate}}</span>
+            </button>
+
+  
+            <!-- / ADD BUTTON -->
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table class="items-table"
+                       #table [dataSource]="referenceCategroyList"
+                       matSort
+                       [@animateStagger]="{value:'50'}"
+                       fusePerfectScrollbar>
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'CATEGORIES.ID' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let category">
+                        <p class="text-truncate">{{category.Id}}</p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <!-- ShortLabel Column -->
+                <ng-container matColumnDef="shortLabel">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'CATEGORIES.SHORT_LABEL' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let category">
+                        <p class="text-truncate">{{category.ShortLabel}}</p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let category; columns: displayedColumns;"
+                         class="categories"
+                         (click)="ShowCategoryDialog(category)" 
+                         matRipple>
+                </mat-row>
+
+            </mat-table>
+
+            <mat-paginator #paginator
+                           [length]="totalCount"
+                           [pageIndex]="0"
+                           [pageSize]="10"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

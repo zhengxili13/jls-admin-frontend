@@ -1,0 +1,63 @@
+<div id="login" class="inner-scroll" fxLayout="row" fxLayoutAlign="start">
+
+    <div id="login-intro" fxFlex fxHide fxShow.gt-xs>
+
+        <div class="logo" [@animate]="{value:'*',params:{scale:'0.2'}}">
+            <img src="assets/images/logos/fuse.svg">
+        </div>
+
+        <div class="title" [@animate]="{value:'*',params:{delay:'50ms',y:'25px'}}">
+            {{'login.WelcomeToTheJLSAdmisSystem' | translate}}
+        </div>
+        <div class="description" [@animate]="{value:'*',params:{delay:'100ms',y:'25px'}}">
+            {{'login.WelcomeToTheJLSAdmisSystem' | translate}}
+        </div>
+     
+
+    </div>
+
+    <div id="login-form-wrapper" fusePerfectScrollbar
+         [@animate]="{value:'*',params:{delay:'300ms',x:'100%'}}">
+
+        <div id="login-form">
+
+            <div class="logo" fxHide.gt-xs>
+                <img src="assets/images/logos/fuse.svg">
+            </div>
+
+            <div class="title">{{'login.LoginToYourAccount' | translate}}</div>
+
+            <form name="loginForm" [formGroup]="loginForm" novalidate>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>{{'login.Email' | translate}}</mat-label>
+                    <input matInput formControlName="email">
+                    <mat-icon matSuffix class="secondary-text">mail</mat-icon>
+                    <mat-error *ngIf="loginForm.get('email').hasError('required')">
+                        {{'login.EmailIsRequired' | translate}}
+                    </mat-error>
+                    <mat-error
+                        *ngIf="!loginForm.get('email').hasError('required') &&
+                                loginForm.get('email').hasError('email')">
+                        {{'login.PleaseEnterAValidEmailAddress' | translate}}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>{{'login.Password' | translate}}</mat-label>
+                    <input matInput type="password" formControlName="password">
+                    <mat-icon matSuffix class="secondary-text">vpn_key</mat-icon>
+                    <mat-error>
+                       {{'login.PasswordIsRequired' | translate}}
+                    </mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button color="accent" class="submit-button" aria-label="LOGIN" (click)="login()"
+                        [disabled]="loginForm.invalid">
+                        {{'login.Login' | translate}}
+                </button>
+
+            </form>
+        </div>
+    </div>
+</div>

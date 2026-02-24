@@ -1,0 +1,136 @@
+<div id="categories" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <div class="overlay" *ngIf="loading">
+            <div class="spinner-center">
+                <mat-spinner></mat-spinner>
+            </div>
+        </div>
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    shopping_cart
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    {{'CART.Title' | translate}}
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <!-- ADD BUTTON -->
+            <button mat-raised-button [routerLink]="['/apps/e-commerce/order/']" [queryParams]="{View :view}"
+                class="add-item-button fuse-white mt-24 mt-md-0"
+                [disabled]='cartProductList==null || cartProductList.length<=0 '>
+                <span>{{'CART.CreateOrder' | translate}}</span>
+            </button>
+
+
+            <!-- / ADD BUTTON -->
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card" fusePerfectScrollbar>
+
+            <mat-table class="items-table" #table [dataSource]="cartProductList" matSort
+                [@animateStagger]="{value:'50'}" >
+
+                <ng-container matColumnDef="image">
+                    <mat-header-cell *matHeaderCellDef>{{'CART.Photos' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+
+                        <img class="product-image" *ngIf="product.DefaultPhotoPath" [alt]="product.Label"
+                            [src]="environment.url + product.DefaultPhotoPath" />
+                        <img *ngIf="!product.DefaultPhotoPath" class="product-image"
+                            [src]="'assets/images/ecommerce/product-image-placeholder.png'">
+
+                    </mat-cell>
+                </ng-container>
+
+                <!-- ShortLabel Column -->
+                <ng-container matColumnDef="product">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'CART.Product' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.Label}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="price">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'CART.Price' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.Price | currency:'EUR':'symbol' }}</p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <ng-container matColumnDef="quantity">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'CART.Quantity' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <div>
+                            <button mat-button color="primary" style="padding-left:0px; min-width: 32px;"
+                                (click)="addOrMinusProduct(product,'minus')"
+                                [disabled]="product.Quantity<=product.MinQuantity">
+                                <mat-icon>indeterminate_check_box</mat-icon>
+                            </button>
+                            <input type="text" type="number" min="product.MinQuantity"
+                                style="width: 40px; padding: 0px; text-align: center;" [(ngModel)]="product.Quantity"
+                                (change)="quantityChange(product)">
+                            <button mat-button color="primary" (click)="addOrMinusProduct(product,'add')">
+                                <mat-icon>add_box</mat-icon>
+                            </button>
+                        </div>
+
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="total">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{'CART.Total' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{ (product.Price * product.Quantity) | currency:'EUR':'symbol'}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef>{{'CART.Acion' | translate}}</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <button mat-button color="primary" (click)="DeleteFromCart(product, $event)">
+                            <mat-icon>delete_forever</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-row *matRowDef="let product; columns: displayedColumns;" class="categories" style="height: 84px;">
+                </mat-row>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+            </mat-table>
+
+            <div class="m-24" *ngIf="cartProductList!=null&&cartProductList.length>0">
+                <h4>{{'CART.TotalSansTVA' | translate}}: <span style="float: right;">{{ calculBasicTotalPrice()
+                    | currency:'EUR':'symbol'}}</span> </h4>
+                <hr>
+                <h4>{{'CART.TVA' | translate}}({{taxRate*100}}%): <span
+                        style="float: right;">{{calculBasicTotalPrice()*taxRate | currency:'EUR':'symbol'}}</span> </h4>
+                <hr>
+                <h2>{{'CART.TotalavecTVA' | translate}}: <span
+                        style="float: right;">{{calculBasicTotalPrice()*(1+taxRate) | currency:'EUR':'symbol'}}</span>
+                </h2>
+            </div>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

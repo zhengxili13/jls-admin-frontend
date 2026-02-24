@@ -1,0 +1,62 @@
+<div mat-dialog>
+    <div mat-dialog-title>{{'users.Add/Modify' | translate}}</div>
+    <div mat-dialog-content>
+
+        <form class="example-form" [formGroup]="userForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>{{'users.Email' | translate}}</mat-label>
+                <input matInput required formControlName="Email" type="email">
+            </mat-form-field>
+
+            <table class="example-full-width" cellspacing="0">
+                <tr>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>{{'users.UserType' | translate}}</mat-label>
+                            <mat-select required formControlName="RoleId">
+                                <mat-option *ngFor="let item of data.userRoleList" [value]="item.Id">{{item.Name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field style="display: block;">
+                            <mat-label>{{'users.UserStatus' | translate}}</mat-label>
+                            <mat-select required formControlName="Validity">
+                                <mat-option *ngFor="let item of data.statusList" [value]="item.Value">{{item.Label}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <mat-checkbox [(ngModel)]="modifyPassword" [disabled]="modifyPasswordDisabled">{{'users.ModifyPassword' | translate}}</mat-checkbox>
+        <div *ngIf="modifyPassword">
+            <mat-form-field class="example-full-width">
+                <mat-label>{{'users.Password' | translate}}</mat-label>
+                <input matInput required type="password" [(ngModel)]="password">
+            </mat-form-field>
+            <mat-error *ngIf="checkPasswordLength()">
+                {{'users.PasswordMustHaveAtLeast8Caracters' | translate}}
+            </mat-error>
+            <mat-form-field class="example-full-width">
+                <mat-label>{{'users.ConfirmPassword' | translate}}</mat-label>
+                <input matInput required type="password" [(ngModel)]="confirmPassword">
+
+            </mat-form-field>
+
+            <mat-error *ngIf="checkPasswordSame()">
+                {{'users.PasswordsDoNotMatch' | translate}}
+            </mat-error>
+        </div>
+        <div style="margin-top: 10px;">
+            <button mat-raised-button color="primary" (click)="addAddress()">Add address</button>
+        </div>
+    </div>
+
+    <div class="pt-24" mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">{{'users.Cancel' | translate}}</button>
+        <button mat-button [disabled]="checkSaveButton()" (click)="save()">{{'users.Save' | translate}}</button>
+    </div>
+</div>
