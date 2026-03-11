@@ -4,8 +4,8 @@
 
 export const environment = {
     production: false,
-    hmr       : false,
-    url: 'http://jlsservice.europetechs.com/'
+    hmr: false,
+    url: 'https://localhost:49631/'
 };
 
 /*
