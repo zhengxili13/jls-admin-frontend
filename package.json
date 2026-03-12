@@ -12,7 +12,10 @@
         "build-prod-stats": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --configuration production --stats-json",
         "test": "ng test",
         "lint": "ng lint",
-        "e2e": "ng e2e"
+        "e2e": "ng e2e",
+        "deploy": "npm run build && wrangler deploy",
+        "preview": "npm run build && wrangler dev",
+        "cf-typegen": "wrangler types"
     },
     "engines": {
         "node": ">=20.18.1"
