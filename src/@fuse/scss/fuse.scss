@@ -1,5 +1,6 @@
-﻿// Material theming tools
+// Material theming tools
+@use '@angular/material' as mat;
 @import '@angular/material/theming';
 
 // Breakpoint mixins
-@import "partials/breakpoints";
+@import "src/@fuse/scss/partials/breakpoints";
