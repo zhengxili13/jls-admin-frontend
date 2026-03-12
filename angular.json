@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "fuse": {
+        "jls-admin-frontend": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/fuse",
+                        "outputPath": "dist/jls-admin-frontend",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": [
@@ -95,23 +95,23 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "fuse:build"
+                        "browserTarget": "jls-admin-frontend:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "fuse:build:production"
+                            "browserTarget": "jls-admin-frontend:build:production"
                         },
                         "development": {
-                            "browserTarget": "fuse:build:development"
+                            "browserTarget": "jls-admin-frontend:build:development"
                         },
                         "func": {
-                            "browserTarget": "fuse:build:func"
+                            "browserTarget": "jls-admin-frontend:build:func"
                         },
                         "hmr": {
-                            "browserTarget": "fuse:build:hmr"
+                            "browserTarget": "jls-admin-frontend:build:hmr"
                         },
                         "ec": {
-                            "browserTarget": "fuse:build:ec"
+                            "browserTarget": "jls-admin-frontend:build:ec"
                         }
                     },
                     "defaultConfiguration": "development"
@@ -119,7 +119,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "fuse:build"
+                        "browserTarget": "jls-admin-frontend:build"
                     }
                 },
                 "test": {
@@ -145,7 +145,7 @@
             }
         }
     },
-    "defaultProject": "fuse",
+    "defaultProject": "jls-admin-frontend",
     "cli": {
         "analytics": false
     }
