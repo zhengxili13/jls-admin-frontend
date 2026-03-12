@@ -13,8 +13,8 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "deploy": "npm run build && wrangler deploy",
-        "preview": "npm run build && wrangler dev",
+        "deploy": "npm run build && wrangler pages deploy dist/jls-admin-frontend",
+        "preview": "npm run build && wrangler pages dev dist/jls-admin-frontend",
         "cf-typegen": "wrangler types"
     },
     "engines": {
